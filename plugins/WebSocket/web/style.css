@@ -1,0 +1,432 @@
+:root {
+    --pc-main-padding: 20px;
+    --bg: url("/person.svg");
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #efefef;
+    font-size: 15px;
+    /*scroll-behavior: smooth;*/
+}
+
+body {
+    height: 100vh;
+    width: 100vw;
+}
+
+main {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /*padding: var(--pc-main-padding);*/
+    background-color: #303133;
+}
+
+header {
+    width: 100%;
+    height: 50px;
+    border-bottom: 1px solid #545454;
+    background-color: #222222;
+}
+
+section,
+article {
+    height: 100%;
+}
+
+article.clients {
+    width: 20%;
+    float: left;
+}
+
+section.main {
+    width: 80%;
+    float: right;
+}
+
+article {
+    height: 100%;
+}
+
+article.chat {
+    position: relative;
+    width: 75%;
+    float: left;
+    border-left: 1px solid #545454;
+    border-right: 1px solid #545454;
+}
+
+article.options {
+    width: 25%;
+    float: right;
+}
+
+article.clients {
+    padding: 8px;
+}
+
+article.clients .client {
+    display: flex;
+    width: 100%;
+    height: 60px;
+    padding: 5px;
+    cursor: pointer;
+    background-color: rgba(38, 39, 41, 0.6);
+    margin-bottom: 5px;
+    border-radius: 5px;
+    transition: .2s;
+    -webkit-transition: .2s;
+    -moz-transition: .2s;
+    -ms-transition: .2s;
+    -o-transition: .2s;
+}
+
+article.clients .client:hover {
+    background-color: #262729;
+}
+
+.client .image {
+    flex: 0 0 50px;
+    width: 50px;
+    height: 50px;
+    background-color: #4a4b4d;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+}
+
+article.clients .client .info {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0 10px;
+    padding: 8px 0;
+}
+
+article.clients .client .info>* {
+    height: 50%;
+}
+
+article.clients .client .info .name {
+    font-size: 12px;
+}
+
+article.chat .messagesbox {
+    height: calc(100vh - 50px - 53px);
+    overflow: auto;
+}
+
+article.chat .messages {
+    padding: 10px;
+}
+
+article.chat .messages .client {
+    position: relative;
+    margin: 30px 0;
+}
+
+article.chat .messages .client .image {
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    height: 30px;
+}
+
+article.chat .messages .client .msgs {
+    margin: 0 36px;
+}
+
+article.chat .messages .client .msgs .dname {
+    padding-left: 12px;
+    font-size: 12px;
+    color: #b3b3b3;
+}
+
+article.chat .messages .client .msgs .msg {
+    display: table;
+    width: 100%;
+}
+
+article.chat .messages .client .msgs :not(.msg)+.msg .text,
+:not(.msgs)>.msg .text {
+    border-top-left-radius: 15px !important;
+}
+
+article.chat .messages .client .msgs .msg:last-child .text,
+:not(.msgs)>.msg .text {
+    border-bottom-left-radius: 15px !important;
+}
+
+article.chat .msg .text {
+    float: left;
+    margin: 1px 0;
+    padding: 6px 12px;
+    line-height: 20px;
+    background-color: #262729;
+    border-radius: 4px 15px 15px 4px;
+    animation: fadein .5s;
+    -moz-animation: fadein .5s;
+    -webkit-animation: fadein .5s;
+    -o-animation: fadein .5s;
+}
+
+article.chat .messages .client[name="self"] .text {
+    float: right;
+    border-radius: 15px 0px 0px 15px;
+}
+
+article.chat .messages .client[name="self"] .msgs {
+    margin-right: 14px;
+}
+
+article.chat .messages .client[name="self"] .msgs .msg:first-child .text {
+    border-top-right-radius: 15px;
+}
+
+article.chat .messages .client[name="self"] .msgs .msg:last-child .text {
+    border-bottom-right-radius: 15px;
+}
+
+article.chat .panel .text .textarea,
+article.chat .panel .text .send {
+    transition: .2s;
+    -webkit-transition: .2s;
+    -moz-transition: .2s;
+    -ms-transition: .2s;
+    -o-transition: .2s;
+}
+
+article.chat .panel {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /*height: 52px;*/
+    margin-bottom: 50px;
+    padding: 8px;
+    border-top: 1px solid #4a4b4d;
+}
+
+article.chat .panel .text {
+    display: flex;
+    align-items: flex-end;
+}
+
+article.chat .panel .text .textbox {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: 18px;
+    background-color: #262729;
+}
+
+article.chat .panel .text .textarea {
+    /*min-height: 36px;*/
+    min-height: 18px;
+    max-height: 150px;
+    /*padding: 9px 12px;*/
+    outline: none;
+    overflow: auto;
+}
+
+article.chat .panel .text .send {
+    width: 50px;
+    height: 36px;
+    padding: 5px 12px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    background: none;
+}
+
+article.chat .panel .text .send:active {
+    opacity: .5;
+}
+
+article.chat .panel .text .textarea:empty::before {
+    content: "Napíšte správu...";
+    cursor: text;
+    opacity: .75;
+}
+
+article.chat .typing {
+    height: 32px;
+    margin: 10px;
+    animation: fadein .5s;
+    -webkit-animation: fadein .5s;
+}
+
+article.chat .typing .clients {
+    display: inline-block;
+    height: 32px;
+    margin-right: 2px;
+}
+
+article.chat .typing .msg {
+    display: inline-block;
+}
+
+article.chat .typing .image {
+    position: relative;
+    top: calc(var(--i) * -30px);
+    width: 30px;
+    height: 30px;
+    margin-left: calc(var(--i) * 10px);
+    background-color: #4a4b4d;
+    border-radius: 50%;
+}
+
+article.chat .typing .point {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-bottom: 2px;
+    background-color: #8e8e8e;
+    border-radius: 50%;
+    animation: typing 1.5s infinite ease-in-out;
+    -webkit-animation: typing 1.5s infinite ease-in-out;
+}
+
+article.chat .typing .point:nth-child(1) {
+    animation-delay: 200ms;
+}
+
+article.chat .typing .point:nth-child(2) {
+    animation-delay: 300ms;
+}
+
+article.chat .typing .point:nth-child(3) {
+    animation-delay: 400ms;
+}
+
+.image {
+    background-image: var(--bg);
+    background-size: 101%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* width */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    /*background: #f1f1f1;*/
+    background: transparent;
+}
+
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 5px;
+}
+
+
+/* Handle on hover */
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes fadein {
+    /* Firefox */
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadein {
+    /* Safari and Chrome */
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes fadein {
+    /* Opera */
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes typing {
+    0% {
+        transform: translateY(0px);
+    }
+    28% {
+        transform: translateY(-6px);
+    }
+    44% {
+        transform: translateY(0px);
+    }
+}
+
+@-moz-keyframes typing {
+    0% {
+        transform: translateY(0px);
+    }
+    28% {
+        transform: translateY(-6px);
+    }
+    44% {
+        transform: translateY(0px);
+    }
+}
+
+@-webkit-keyframes typing {
+    0% {
+        -webkit-transform: translateY(0px);
+    }
+    28% {
+        -webkit-transform: translateY(-6px);
+    }
+    44% {
+        -webkit-transform: translateY(0px);
+    }
+}
+
+@-o-keyframes typing {
+    0% {
+        transform: translateY(0px);
+    }
+    28% {
+        transform: translateY(-6px);
+    }
+    44% {
+        transform: translateY(0px);
+    }
+}

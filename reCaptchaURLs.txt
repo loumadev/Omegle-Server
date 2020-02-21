@@ -1,0 +1,3 @@
+D: https://www.google.com/recaptcha/api2/anchor?ar=1&k=6Le-wvkSAAAAAPBMRTvw0Q4Muexq9bi0DJwx_mJ-&co=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbTo0NDM.&hl=sk&v=eQmzkx3d5dtuXlLOA4pEID3I&size=normal&cb=bei7pnv34nk5
+O: https://www.google.com/recaptcha/api2/anchor?ar=1&k=6LekMVAUAAAAAPDp1Cn7YMzjZynSb9csmX5V4a9P&co=aHR0cHM6Ly93d3cub21lZ2xlLmNvbTo0NDM.&hl=sk&v=eQmzkx3d5dtuXlLOA4pEID3I&size=normal&cb=3q5hqb59mhav
+O: https://www.google.com/recaptcha/api2/anchor?ar=1&k=6LekMVAUAAAAAPDp1Cn7YMzjZynSb9csmX5V4a9P&co=aHR0cHM6Ly93d3cub21lZ2xlLmNvbTo0NDM.&hl=sk&v=eQmzkx3d5dtuXlLOA4pEID3I&size=normal&cb=vmzensuzihbd
