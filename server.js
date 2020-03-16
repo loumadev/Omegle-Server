@@ -247,7 +247,7 @@ class Server extends EventListener {
 
                 if(cmd) Out.log(`| [§aCommand§r] §e${client.displayName}§r: §b${message}§r`);
 
-                if(cmd == -1) return client.send(`| [Príkaz] Neznámy príkaz!`);
+                if(cmd == -1) return client.send(`| [Príkaz] Neznámy príkaz "${message.split(" ")[0]}"!`);
                 else if(cmd) return;
 
                 this.broadcast(`| [${client.displayName}] ${message}`, client);
