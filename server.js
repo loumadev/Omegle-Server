@@ -309,10 +309,16 @@ module.exports = Server;
 server = new Server(10);
 
 
-/*server.on("message", e => {
-    var words1 = ["kokot", "piča", "pičus", "jebať", "jebem", "jebe", "jeb", "chuj"];
-    var words2 = ["debil"];
-});*/
+server.on("message", e => {
+    var words1 = ["kokot", "piča", "pičus", "jebať", "jebem", "jebe", "chuj"];
+    //var words2 = ["debil", "idiot"];
+    for(var word of words1) {
+        if(e.message.indexOf(word) > -1) {
+            e.preventDefault();
+            e.client.send(`| [Chat] Správa obsahuje nepovolené slovo! (${word})`);
+        }
+    }
+});
 
 
 
