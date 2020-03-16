@@ -35,11 +35,11 @@ server.on("load", () => {
             Events.math.answer = undefined;
         }, 20e3);
 
-    }, 60e3 * 5);
+    }, 60e3 * 10);
 
 });
 
-/*server.on("message", e => {
+server.on("message", e => {
     let client = e.client;
     let message = e.message;
 
@@ -55,4 +55,4 @@ server.on("load", () => {
             e.preventDefault();
         }
     }
-});*/
+});
