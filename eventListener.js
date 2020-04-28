@@ -9,27 +9,31 @@ class EventListener {
         return listener;
     }
     dispatchEvent(type, data, callback) {
+        //Setup Event Object
         var eventObject = {
-            type: type,
-            time: new Date().getTime(),
-            defaultPreventable: !!callback,
-            defaultPrevented: false,
-            hasListener: false,
-            preventDefault: function() {
-                if(this.defaultPreventable) this.defaultPrevented = true;
-                else throw new Error("Event " + this.type + " is not default preventable!");
-            }
+            ... {
+                type: type,
+                time: new Date().getTime(),
+                defaultPreventable: !!callback,
+                defaultPrevented: false,
+                hasListener: false,
+                preventDefault: function() {
+                    if(this.defaultPreventable) this.defaultPrevented = true;
+                    else throw new Error("Event " + this.type + " is not default preventable!");
+                }
+            },
+            ...data
         };
-        var returnedData = [];
-        for(var key in data) {
-            eventObject[key] = data[key];
-        }
-        for(var elm of this.listeners) {
-            if(elm.event != type) continue;
+
+        //Run all listener's callbacks
+        for(var listener of this.listeners) {
+            if(listener.event != type) continue;
             eventObject.hasListener = true;
-            returnedData.push(elm.callback(eventObject));
+            listener.callback(eventObject);
         }
-        if(!eventObject.defaultPrevented && callback) callback(returnedData.length == 1 ? returnedData[0] : returnedData);
+
+        //Call callback and return data returned by default callback
+        if(!eventObject.defaultPrevented && callback) return callback(eventObject);
     }
     removeEventListener(listener) {
         for(var elm of this.listeners) {

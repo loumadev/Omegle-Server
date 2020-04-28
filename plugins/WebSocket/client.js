@@ -4,6 +4,7 @@ class Client extends OmegleClient {
     constructor(socket) {
         super("SocketClient", null);
         this.socket = socket;
+        this.image = null;
         Client.clients.push(this);
     }
     sendData(request, data) {
@@ -12,8 +13,9 @@ class Client extends OmegleClient {
             data: data
         }));
     }
-    send(message) {
-        this.socket.send(JSON.stringify({ request: "chat", data: { client: this.name, message: message } }));
+    send(message, type = "message", sender = {}) {
+        //if(type == "chat") return;
+        this.socket.send(JSON.stringify({ request: "chat", data: { client: sender.name, message: message, type: type } }));
     }
     disconnect() {
         this.socket.close();
@@ -45,5 +47,6 @@ Client.clients = [];
 Client.prototype.connect = () => null;
 Client.prototype.fireEvents = () => null;
 Client.prototype.eventsFetch = () => true;
+Client.prototype.settings = {};
 
 module.exports = Client;

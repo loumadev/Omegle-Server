@@ -14,15 +14,18 @@ new Command("shop").on("execute", e => {
         return sender.send(`==== Shop ====
  > Vitaj v Shope
  > Aktuálne máš ${coins || 0} mincí!
- > Možnosť vyberieš pomocou "/shop <číslo_možnosti>"
+ > Možnosť vyberieš pomocou "/shop <číslo_možnosti>"${!sender.isLogged ? '\n > Na použitie Shopu musíš byť prihlásený!' : ""}
 
-${ShopItem.generateMenu()}
-=========`);
+${ShopItem.generateMenu().join("\n")}
+=========`, "announcement");
     }
 
-    if(e.args[0] == "1") {
-
+    if(!isNaN(e.args[0])) {
+        if(!sender.isLogged) return sender.send(`[Shop] Shop sa dá použiť, iba ak si prihlásený!`);
+        ShopItem.select(sender, +e.args[0]);
     }
+
+    return sender.send(`[Príkaz] Použi "/shop"!`);
 
 });
 
@@ -36,24 +39,28 @@ class ShopItem extends EventListener {
     }
     static select(client, id) {
         let coins = Coins.get(client);
-        let item = ShopItem.items[+ --id];
+        let item = ShopItem.items[--id];
 
         if(item) {
             if(coins < item.cost) return;
-            item.dispatchEvent("buy", { client: client, item: item }, message => {
-                Coins.add(-item.cost);
+            item.dispatchEvent("buy", { client: client, item: item, messages: [] }, e => {
+                Coins.add(client, -item.cost);
                 client.send(`==== Shop ====
  > Obchod bol úspešný!
- > ${message instanceof Array ? message.join("\n > ") : message}
+ > ${e.messages instanceof Array ? e.messages.join("\n > ") : e.messages}
 Názov: ${item.name}
 Cena: ${item.cost} Mincí
 Nový zostatok: ${Coins.get(client)} Mincí
-=========`);
+=========`, "announcement");
             });
-        } else return;
+        } else {
+            return client.send(`==== Shop ====
+Neplatné číslo možnosti!
+=========`, "announcement");
+        }
     }
     static generateMenu() {
-        return ShopItem.items.reduce((prev, curr, i) => prev += `${i+1}. ${curr.name} - ${curr.description} [${curr.cost} Mincí]`, "");
+        return ShopItem.items.reduce((prev, curr, i) => (prev.push(`${i+1}. ${curr.name} - ${curr.description} [${curr.cost} Mincí]`), prev), []);
     }
 }
 ShopItem.items = [];

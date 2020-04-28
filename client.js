@@ -1,4 +1,6 @@
+//const { Builder, By, until } = require('selenium-webdriver');
 const fetch = require('node-fetch');
+//const HttpsProxyAgent = require('https-proxy-agent');
 const EventListener = require("./eventListener.js");
 const Out = require("./formatting.js");
 
@@ -15,6 +17,7 @@ const Event = {
     CONNECTION_DIED: "connectionDied",
     RECAPTCHA_REQUIRED: "recaptchaRequired",
     ERROR: "error",
+    //Custom Events
     LISTENING_ERROR: "client_listeningError",
     CLIENT_DISCONNECT: "client_clientDisconnected"
 };
@@ -37,12 +40,19 @@ class OmegleClient extends EventListener {
             this.isConnected = true;
         });
 
-        this.addEventListener(Event.RECAPTCHA_REQUIRED, e => {
-            fetch(`https://www.google.com/recaptcha/api2/anchor?ar=1&k=${e}&co=aHR0cHM6Ly93d3cub21lZ2xlLmNvbTo0NDM.&hl=sk&v=eQmzkx3d5dtuXlLOA4pEID3I&size=normal` /*, { qs: { k: id } }*/ ).then(res => res.text()).then(text => {
-                var ans = (text.match(/id="recaptcha-token" value="(.*?)"/) || "")[1];
-                Out.log(`§3${this.name}: got captcha solution`);
-                fetch("https://front14.omegle.com/recaptcha", { "credentials": "omit", "headers": { "accept": "text/javascript, text/html, application/xml, text/xml, */*", "accept-language": "sk-SK,sk;q=0.9,cs;q=0.8,en-US;q=0.7,en;q=0.6", "content-type": "application/x-www-form-urlencoded; charset=UTF-8", "sec-fetch-mode": "cors", "sec-fetch-site": "same-site" }, "referrer": "https://www.omegle.com/", "referrerPolicy": "no-referrer-when-downgrade", "body": `response=${ans}&id=${this.id}`, "method": "POST", "mode": "cors" }).then(res => res.text()).then(text => Out.log(`§e${this.name}: Captcha: ${text}`));
-            });
+        this.addEventListener(Event.RECAPTCHA_REQUIRED, async e => {
+            Out.warn("Recaptcha!");
+            /*let driver = await new Builder().forBrowser("chrome").build();
+            try {
+                await driver.get("https://www.omegle.com/");
+                await driver.findElement(By.id("textbtn")).click();
+                //await driver.click(driver.findElement(By.id("textbtn")));
+                await driver.wait(until.elementLocated(By.className("rc-anchor-content")), 4000);
+                await driver.findElement(By.className("rc-anchor-content")).click();
+                await driver.executeScript("document.getElementById('u_0_a').click()");
+            } finally {
+                await driver.quit();
+            }*/
         });
     }
     reset() {
@@ -77,6 +87,12 @@ class OmegleClient extends EventListener {
             //console.log(json);
             //console.log("Connected");
 
+            if(!Object.keys(json).length) {
+                this.isWaiting = false;
+                Out.error("Connect", this.name, "(Server returned empty Object)", json);
+                return false;
+            }
+
             this.clientID = json.clientID;
             this.isWaiting = false;
             this.fireEvents(json.events);
@@ -89,7 +105,9 @@ class OmegleClient extends EventListener {
         }).catch(e => {
             this.isWaiting = false;
             Out.error("Connect", this.name, e);
-            this.connect(this.settings);
+            setTimeout(() => {
+                this.connect(this.settings);
+            }, 2000);
         });
     }
     disconnect() {
@@ -104,6 +122,7 @@ class OmegleClient extends EventListener {
 
     getOptions(type, body) {
         return {
+            //"agent": new HttpsProxyAgent('http://165.22.41.190:80'),
             "credentials": "omit",
             "headers": {
                 "accept": type == "text" ? "text/javascript, text/html, application/xml, text/xml, */*" : (type == "json" ? "application/json" : type),

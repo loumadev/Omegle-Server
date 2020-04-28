@@ -14,6 +14,11 @@ class Client extends EventListener {
         this.image = object.image || "/Omegle/plugins/WebSocket/web/person.svg";
         Client.clients.push(this);
     }
+    update(object) {
+        this.name = object.name || this.name;
+        this.displayName = object.displayName || this.displayName;
+        this.image = typeof object.image === "object" ? "/Omegle/plugins/WebSocket/web/person.svg" : (typeof object.image === "undefined" ? this.image : object.image);
+    }
     static get(name) {
         for(var client of Client.clients) {
             if(client.name == name) return client;
@@ -23,7 +28,7 @@ class Client extends EventListener {
 }
 Client.clients = [];
 
-class chat extends EventListener {
+class OmegleChat extends EventListener {
     constructor() {
         super();
         this.socket = null;
@@ -49,10 +54,10 @@ class chat extends EventListener {
         return `${str.replace(/\\§/gm, "§").replace(/\n|\r\n/gmi, "<br>")}<br>`;
     }
     connect() {
-        Chat.socket = new WebSocket(`ws://94.136.148.85:3241/`);
+        this.socket = new WebSocket(`ws://94.136.148.85:3241/`);
 
-        Chat.socket.onopen = () => {
-            Chat.connected = true;
+        this.socket.onopen = () => {
+            this.connected = true;
 
             this.dispatchEvent("open");
 
@@ -61,19 +66,19 @@ class chat extends EventListener {
             }));*/
         };
 
-        Chat.socket.onclose = (data) => {
+        this.socket.onclose = data => {
             console.log(data);
 
-            Chat.connected = false;
+            this.connected = false;
             this.dispatchEvent("close", { code: data });
         };
 
-        Chat.socket.onerror = (error) => {
+        this.socket.onerror = error => {
             console.error(error);
             this.dispatchEvent("error", { error: error });
         };
 
-        Chat.socket.onmessage = (message) => {
+        this.socket.onmessage = message => {
             console.log(message);
 
             var Data = JSON.parse(message.data);
@@ -82,13 +87,14 @@ class chat extends EventListener {
 
             this.dispatchEvent("data", { message: Data, req: req, data: data }, () => {
                 if(req == "client") {
-                    Chat.self = new Client(data);
+                    this.self = new Client(data);
                 } else if(req == "clients") {
                     for(var client of data) {
                         new Client(client);
                     }
                 } else if(req == "chat") {
-                    newMessage(data.client, data.message);
+                    var client = Client.get(data.client);
+                    newMessage(data.message, client, data.type);
                 } else {
                     console.log(JSON.stringify(data));
                 }
@@ -103,7 +109,7 @@ class chat extends EventListener {
         }));
     }
 }
-const Chat = new chat();
+const Chat = new OmegleChat();
 
 const Colors = {
     "0": "color:#000000",
@@ -140,15 +146,16 @@ if(!window.WebSocket) {
 
 Elm.send.onclick = () => {
     var text = Elm.textarea.innerHTML.trim();
+    Elm.textarea.innerHTML = "";
 
     Chat.send("chat", text);
 
-    newMessage("self", text);
+    newMessage(text, "self", "chat");
 };
 
 
 
-function newMessage(client, message) {
+function newMessage(message, client, type) {
     var messages = get(Elm.messages, ".client");
     var last = messages[messages.length - 1];
     var name = last.getAttribute("name");
@@ -165,7 +172,6 @@ function newMessage(client, message) {
 
             var html = `<div class="client" name="self"><div class="msgs"><div class="msg" time="${new Date().getTime()}"><div class="text">${message}</div></div></div></div>`;
             Elm.messages.appendChild(parseHTML(html));
-
         }
 
     } else {
@@ -178,7 +184,6 @@ function newMessage(client, message) {
 
             var html = `<div class="client" name="${client.name}" dname="${client.displayName}"><div class="image"></div><div class="msgs"><div class="dname">${client.displayName}</div><div class="msg" time="${new Date().getTime()}"><div class="text">${message}</div></div></div></div>`;
             Elm.messages.innerHTML += html;
-
         }
 
     }
@@ -186,7 +191,7 @@ function newMessage(client, message) {
     Elm.msgbox.scroll({
         top: Elm.msgbox.scrollHeight - Elm.msgbox.offsetHeight,
         left: 0,
-        behavior: 'smooth'
+        behavior: "smooth"
     });
 
 }

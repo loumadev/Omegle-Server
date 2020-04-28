@@ -30,7 +30,7 @@ var httpServer = http.createServer(function(req, res) {
 });
 
 httpServer.listen(wsPort, function() {
-    Out.log(`| [${name}] §aServer is listenting on port §b${wsPort}§a!`);
+    Out.log(`[${name}] §aServer is listenting on port §b${wsPort}§a!`);
 });
 
 
@@ -39,19 +39,23 @@ var wss = new wsServer({
     httpServer: httpServer
 });
 
+/* Setup Handler */
 wss.on("request", function(request) {
     Out.log(`§aNew connection from §b${request.remoteAddress}§a!`);
 
+    //Accept request and create new Client
     let socket = request.accept(null, request.origin);
     let client = new SocketClient(socket);
 
     Out.log(`§aRequest accepted!`);
 
+    //Manage Client
     client.name = `WebStranger${++server.number}`;
     server.addListeners(client, null);
     server.clients.push(client);
     client.dispatchEvent(OmegleClient.CONNECTED);
 
+    //Send all connected clients to Client
     client.sendData("client", {
         name: client.name,
         displayName: client.displayName,
@@ -67,17 +71,20 @@ wss.on("request", function(request) {
     }
     client.sendData("clients", arr);
 
+    //Message event handler
     socket.on("message", function(message) {
         if(message.type != "utf8") return;
 
+        //Manage data
         var Data = JSON.parse(message.utf8Data);
 
         let req = Data.request;
         let data = Data.data;
 
+        //Chat event
         if(req == "chat") {
             if(!data) return false;
-            client.send(`| [${client.displayName}] ${data}`);
+            client.send(`[${client.displayName}] ${data}`, "chat");
             client.dispatchEvent(OmegleClient.MESSAGE, { client: client, data: data });
         }
 
@@ -102,6 +109,7 @@ wss.on("request", function(request) {
 
     });
 
+    //Close event Handler
     socket.on("close", function(data) {
         console.log(data);
         Out.log(`§eUser §b${client.nick} §e has disconnected!`);
@@ -121,6 +129,13 @@ server.on("load", e => {
 
 });
 
+
+/*server.on("chat", e => {
+	let client = e.client;
+	let message = e.message;
+
+	OmegleClient.broadcast(message, client, );
+});*/
 
 
 /* Other */

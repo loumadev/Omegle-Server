@@ -1,4 +1,11 @@
+const Settings = {
+    logs: true,
+    warnings: true,
+    errors: true
+};
+
 const consoleLog = (...args) => {
+    if(!Settings.logs) return;
     for(var arg of args) {
         if(typeof arg === "string") console.log(formatMessage(arg));
         else console.log(arg);
@@ -6,11 +13,25 @@ const consoleLog = (...args) => {
 }
 
 const consoleWarn = (...args) => {
+    if(!Settings.warnings) return;
     console.log("\x1b[33m", ...args, "\x1b[0m");
 }
 
 const consoleError = (...args) => {
+    if(!Settings.errors) return;
     console.log("\x1b[31m", ...args, "\x1b[0m");
+}
+
+const setLogs = enable => {
+    Settings.logs = enable;
+}
+
+const setWarnings = enable => {
+    Settings.warnings = enable;
+}
+
+const setErrors = enable => {
+    Settings.errors = enable;
 }
 
 const formatMessage = msg => {
@@ -35,3 +56,6 @@ const formatMessage = msg => {
 module.exports.log = consoleLog;
 module.exports.warn = consoleWarn;
 module.exports.error = consoleError;
+module.exports.setLogs = setLogs;
+module.exports.setWarnings = setWarnings;
+module.exports.setErrors = setErrors;

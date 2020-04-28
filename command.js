@@ -12,17 +12,18 @@ class Command extends EventListener {
 
         if(!match) return false;
 
-        var cmd = match[1].toLowerCase();
-        var args = (match[2] || "").split(" ");
+        var cmd = match[1].toLowerCase(); //Command name
+        var args = (match[2] || "").split(" "); //Command arguments
 
-        for(var command of Command.commands) {
-            if(command.name == cmd || command.aliases.indexOf(cmd) > -1) {
-                command.dispatchEvent("execute", { args: args, executor: executor });
-                return true;
+        return require("./server.js").getServer().dispatchEvent("command", { executor: executor, message: message, command: cmd, arguments: args }, () => {
+            for(var command of Command.commands) {
+                if(command.name == cmd || command.aliases.indexOf(cmd) > -1) {
+                    command.dispatchEvent("execute", { args: args, executor: executor });
+                    return true;
+                }
             }
-        }
-
-        return -1;
+            return -1;
+        });
     }
 }
 Command.commands = [];

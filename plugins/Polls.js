@@ -20,10 +20,10 @@ new Command("poll").on("execute", e => {
     if(cmd == "create") {
         let data = Account.getData(sender);
 
-        if(!sender.hasPermission("poll.client.create") && !data.polls) return sender.send(`| [Príkaz] Tento príkaz je len pre VIP!`);
-        if(poll.isRunning) return sender.send(`| [Poll] Hlasovanie už prebieha!`);
-        if(!question) return sender.send(`| [Príkaz] Použi /poll create <otázka>`);
-        if(!question.match(/^.{8,75}$/)) return sender.send(`| [Poll] Otázka musí mať 8-64 znakov!`);
+        if(!sender.hasPermission("poll.client.create") && !data.polls) return sender.send(`[Príkaz] Tento príkaz je len pre VIP!`);
+        if(poll.isRunning) return sender.send(`[Poll] Hlasovanie už prebieha!`);
+        if(!question) return sender.send(`[Príkaz] Použi /poll create <otázka>`);
+        if(!question.match(/^.{8,75}$/)) return sender.send(`[Poll] Otázka musí mať 8-64 znakov!`);
 
         if(data.polls) {
             data.polls--;
@@ -34,7 +34,7 @@ new Command("poll").on("execute", e => {
 
         setTimeout(() => {
             if(!poll.isRunning) return;
-            server.broadcast(`| [Poll] Hlasovanie končí o 5 sekúnd!`);
+            server.broadcast(`[Poll] Hlasovanie končí o 5 sekúnd!`);
         }, time - 5e3);
 
         setTimeout(() => {
@@ -45,7 +45,7 @@ new Command("poll").on("execute", e => {
  > ${question}
 ÁNO: ${Math.round(percent)}% (${poll.yes.length})
 NIE: ${Math.round(100-percent)}% (${poll.no.length})
-============`);
+============`, "announcement");
             poll.isRunning = false;
             poll.yes = [];
             poll.no = [];
@@ -58,33 +58,33 @@ ${sender.displayName} sa pýta:
  > ${question}
 ÁNO: "/poll ano"
 NIE: "/poll nie"
-============`);
+============`, "announcement");
 
 
     } else if(cmd == "ano" || cmd == "nie") {
         cmd = cmd == "ano";
 
-        if(poll.yes.indexOf(sender) > -1 || poll.yes.indexOf(sender) > -1) return sender.send(`| [Poll] Už si hlasoval!`);
+        if(poll.yes.indexOf(sender) > -1 || poll.yes.indexOf(sender) > -1) return sender.send(`[Poll] Už si hlasoval!`);
 
         poll[cmd ? "yes" : "no"].push(sender);
-        return sender.send(`| [Poll] Hlasoval si ${cmd ? "ÁNO" : "NIE"}!`);
+        return sender.send(`[Poll] Hlasoval si ${cmd ? "ÁNO" : "NIE"}!`);
 
     } else if(cmd == "delete") {
-        if(!sender.hasPermission("poll.client.delete")) return sender.send(`| [Príkaz] Na tento príkaz nemáš práva!`);
+        if(!sender.hasPermission("poll.client.delete")) return sender.send(`[Príkaz] Na tento príkaz nemáš práva!`);
 
         poll.isRunning = false;
         poll.yes = [];
         poll.no = [];
 
-        return sender.send(`| [Poll] ${sender.displayName} zrušil hlasovanie za: ${question}!`);
+        return sender.send(`[Poll] ${sender.displayName} zrušil hlasovanie za: ${question}!`);
 
     }
 
-    return sender.send(`| [Príkaz] Neplatný príkaz, napíš "/help" pre viac info!`);
+    return sender.send(`[Príkaz] Neplatný príkaz, napíš "/help" pre viac info!`);
 });
 
 new ShopItem("Poll", 20, "Začať hlasovanie").on("buy", e => {
-    let client = e.executor;
+    let client = e.client;
     var data = Account.getData(client);
 
     if("polls" in data) data.polls++;
@@ -92,5 +92,5 @@ new ShopItem("Poll", 20, "Začať hlasovanie").on("buy", e => {
 
     Account.updateData(client, data);
 
-    return [`Pre začatie hlasovania napíš "/poll create <otázka>"!`, `Počet hlasovaní k dispozícii: ${data.polls}`];
+    e.messages = [`Pre začatie hlasovania napíš "/poll create <otázka>"!`, `Počet hlasovaní k dispozícii: ${data.polls}`];
 });
