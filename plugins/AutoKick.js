@@ -1,7 +1,7 @@
 const server = require(__dirname + "/../server.js").getServer();
 const Command = require(__dirname + "/../command.js");
 
-const spamFilterMessages = 3;
+const spamFilterMessages = 4;
 const spamFilterDelta = 1500;
 const spamFilterDuration = 1e3 * 30;
 
@@ -42,14 +42,16 @@ server.on("chat", e => {
 
     if(!data) data = (client.customData.spamFilter = []);
 
-    if(data.push(new Date()) > spamFilterMessages) data.shift();
+    if(data.push(new Date()) > spamFilterMessages) {
+        data.shift();
 
-    if(data[data.length - 1] - data[0] < spamFilterDelta) {
-        client.isMuted = true;
-        client.send(`[Spam] Bol si umlčaný za spam!`);
-        setTimeout(() => {
-            client.isMuted = false;
-            client.send(`[Spam] Už viac nie si umlčaný!`);
-        }, spamFilterDuration);
+        if(data[data.length - 1] - data[0] < spamFilterDelta) {
+            client.isMuted = true;
+            client.send(`[Spam] Bol si umlčaný za spam!`);
+            setTimeout(() => {
+                client.isMuted = false;
+                client.send(`[Spam] Už viac nie si umlčaný!`);
+            }, spamFilterDuration);
+        }
     }
 });
